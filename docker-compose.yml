@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+    api:
+        container_name: be_js
+        build:
+            context: ./
+            target: be_js
+        ports:
+            - 3311:3311
+        restart: always

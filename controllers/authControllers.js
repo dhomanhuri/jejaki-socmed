@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 // const model = require()
 const model = require("../models/index");
 
+const bcrypt = require("bcryptjs");
 const login = (req, res) => {
     try {
         const { username, password } = req.body;
@@ -13,7 +14,7 @@ const login = (req, res) => {
             throw "salah";
         }
         delete user.password;
-        const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign(user, process.env.bcrypt_length, { expiresIn: "1h" });
         return res.send({
             status: true,
             message: "successfully login",
@@ -50,7 +51,7 @@ const signin = (req, res) => {
 const signinpost = async (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await User.findOne({ where: { email } });
+        const user = await model.User.findOne({ where: { email } });
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
@@ -58,10 +59,23 @@ const signinpost = async (req, res) => {
         if (!validPassword) {
             return res.status(401).json({ error: "Invalid password" });
         }
-        const token = jwt.sign({ id: user.id }, "your-secret-key", { expiresIn: "1h" });
+        const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "1h" });
         res.cookie("token", token); // Simpan token di cookie
-        res.redirect("/");
+        res.redirect("/threads");
     } catch (err) {
+        console.log(error);
+
+        res.status(500).json({ error: "Error logging in user" });
+    }
+};
+const logout = async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        res.clearCookie("token");
+        res.redirect("/threads");
+    } catch (err) {
+        console.log(error);
+
         res.status(500).json({ error: "Error logging in user" });
     }
 };
@@ -70,13 +84,19 @@ const signup = (req, res) => {
 };
 const signuppost = async (req, res) => {
     const { username, email, password } = req.body;
+    console.log(username);
+    console.log(email);
+    console.log(password);
+
     try {
-        const hash = await bcrypt.hash(password, process.env.JWT_SECRET);
+        const hash = await bcrypt.hash(password, 10);
         const user = await model.User.create({ username, email, password: hash });
-        res.redirect("/login");
+        res.redirect("/auth/signin");
     } catch (err) {
+        console.log(err);
+
         res.status(500).json({ error: "Error registering user" });
     }
 };
 
-module.exports = { login, isLogin, signin, signinpost, signup, signuppost };
+module.exports = { login, isLogin, signin, signinpost, signup, signuppost, logout };

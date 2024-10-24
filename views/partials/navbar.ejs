@@ -2,13 +2,35 @@
     <div class="container">
         <!-- Logo di sebelah kiri -->
         <a class="navbar-brand" href="#">
-            <img src="assets/img/icon.jpg" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+            <img src="/assets/img/icon.jpg" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
             Jejaki Socmed
         </a>
 
-        <!-- Tombol Sign In di sebelah kanan -->
         <div class="d-flex">
-            <a href="/auth/signin" class="btn btn-outline-primary">Sign In</a>
+            <% if (isLoggedin) { %>
+                <!-- Jika sudah login, tampilkan foto user dengan dropdown -->
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- Gambar profile user -->
+
+                        <% if (user.profile_picture!=null) { %>
+                            <img src="<%= user?.profilePicUrl %>" alt="User" width="30" height="30"
+                                class="rounded-circle">
+
+                            <% } else { %>
+                                <img src="/assets/img/profiles.png" alt="User" width="30" height="30"
+                                    class="rounded-circle">
+                                <% } %>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                    </ul>
+                </div>
+                <% } else { %>
+                    <!-- Jika belum login, tampilkan tombol Sign In -->
+                    <a href="/auth/signin" class="btn btn-outline-primary">Sign In</a>
+                    <% } %>
         </div>
     </div>
 </nav>

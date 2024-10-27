@@ -1,9 +1,8 @@
 "use strict";
-const { Model } = require("sequelize"); // models/like.js
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
     const Like = sequelize.define("Like", {}, {});
 
-    // Relasi antara Like dan User serta Post
     Like.associate = function (models) {
         Like.belongsTo(models.User, {
             foreignKey: "user_id",
@@ -18,24 +17,4 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     return Like;
-    // models/like.js
-    // module.exports = (sequelize, DataTypes) => {
-    //     const Like = sequelize.define("Like", {
-    //         userId: {
-    //             type: DataTypes.INTEGER,
-    //             allowNull: false,
-    //         },
-    //         postId: {
-    //             type: DataTypes.INTEGER,
-    //             allowNull: false,
-    //         },
-    //     });
-
-    //     Like.associate = (models) => {
-    //         Like.belongsTo(models.User, { foreignKey: "userId" });
-    //         Like.belongsTo(models.Post, { foreignKey: "postId" });
-    //     };
-
-    //     return Like;
-    // };
 };

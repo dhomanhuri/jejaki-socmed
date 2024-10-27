@@ -1,21 +1,19 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <!-- Logo di sebelah kiri -->
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/threads">
             <img src="/assets/img/icon.jpg" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
-            Jejaki Socmed
+            Jaksos
         </a>
 
         <div class="d-flex">
             <% if (isLoggedin) { %>
-                <!-- Jika sudah login, tampilkan foto user dengan dropdown -->
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <!-- Gambar profile user -->
 
-                        <% if (user.profile_picture!=null) { %>
-                            <img src="<%= user?.profilePicUrl %>" alt="User" width="30" height="30"
+                        <% if (user.user.profile_picture!=null) { %>
+                            <img src="<%= user.user.profile_picture %>" alt="User" width="30" height="30"
                                 class="rounded-circle">
 
                             <% } else { %>
@@ -28,7 +26,6 @@
                     </ul>
                 </div>
                 <% } else { %>
-                    <!-- Jika belum login, tampilkan tombol Sign In -->
                     <a href="/auth/signin" class="btn btn-outline-primary">Sign In</a>
                     <% } %>
         </div>

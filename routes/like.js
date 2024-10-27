@@ -1,39 +1,45 @@
-var express = require("express");
-var router = express.Router();
-const likeControllers = require("../controllers/likeControllers");
-const { isAuthenticated, auth, auth_asguest, auth_asuser } = require("../middleware/auth");
+const express = require("express");
+const router = express.Router();
+const { Like, Post, User } = require("../models");
+const { auth_asuser } = require("../middleware/auth");
 
-router.get("/:postId", auth_asuser, likeControllers.index);
-module.exports = router;
+router.post("/", auth_asuser, async (req, res) => {
+    const { post_id } = req.body;
+    const user_id = req.user.user.id;
+    try {
+        const like = await Like.create({ user_id, post_id });
 
+        res.redirect("/threads");
+    } catch (err) {
+        console.log(err);
 
-// const express = require("express");
-// const router = express.Router();
-// const model = require("../models");
-// const { isAuthenticated } = require("../middlewares/auth");
+        res.status(500).json({ error: "Error liking post" });
+    }
+});
 
-// // Like a post
-// router.post("/:postId", isAuthenticated, async (req, res) => {
-//     const { postId } = req.params;
+// router.post('/unlike', async (req, res) => {
+//     const { postId } = req.body;
 //     const userId = req.user.id;
 
 //     try {
-//         // Cek apakah user sudah like post ini
-//         const existingLike = await Like.findOne({ where: { postId, userId } });
-
-//         if (existingLike) {
-//             // Jika sudah like, hapus like (unlike)
-//             await Like.destroy({ where: { postId, userId } });
-//         } else {
-//             // Jika belum, buat like baru
-//             await Like.create({ postId, userId });
-//         }
-
-//         res.redirect("/");
+//       // Hapus like jika user telah like sebelumnya
+//       await Like.destroy({
+//         where: { postId, userId }
+//       });
+//       res.redirect('/');
 //     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ error: "Error liking post" });
+//       console.error(err);
+//       res.status(500).json({ error: 'Error unliking post' });
 //     }
-// });
+//   });
+router.get("/post/:postId", async (req, res) => {
+    const { postId } = req.params;
+    try {
+        const likes = await Like.findAll({ where: { post_id: postId }, include: ["user"] });
+        res.status(200).json(likes);
+    } catch (err) {
+        res.status(500).json({ error: "Error fetching likes" });
+    }
+});
 
-// module.exports = router;
+module.exports = router;

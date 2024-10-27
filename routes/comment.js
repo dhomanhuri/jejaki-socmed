@@ -1,31 +1,31 @@
 const express = require("express");
 const router = express.Router();
-const model = require("../models");
-const { isAuthenticated } = require("../middlewares/auth");
+const { Comment, Post, User } = require("../models");
+const { isAuthenticated, auth, auth_asguest, auth_asuser } = require("../middleware/auth");
 
-// Like a post
-router.post("/:postId", isAuthenticated, async (req, res) => {
-    const { postId } = req.params;
-    const userId = req.user.id;
-
+router.post("/", auth_asuser, async (req, res) => {
+    console.log(req.body);
+    const user_id = req.user.user.id;
+    const { post_id, content } = req.body;
     try {
-        // Cek apakah user sudah like post ini
-        const existingLike = await Like.findOne({ where: { postId, userId } });
+        const comment = await Comment.create({ user_id, post_id, content });
 
-        if (existingLike) {
-            // Jika sudah like, hapus like (unlike)
-            await Like.destroy({ where: { postId, userId } });
-        } else {
-            // Jika belum, buat like baru
-            await Like.create({ postId, userId });
-        }
-
-        res.redirect("/");
+        res.redirect("/threads");
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Error liking post" });
+        console.log(err);
+
+        res.status(500).json({ error: "Error adding comment" });
+    }
+});
+
+router.get("/post/:postId", async (req, res) => {
+    const { postId } = req.params;
+    try {
+        const comments = await Comment.findAll({ where: { post_id: postId }, include: ["user"] });
+        res.status(200).json(comments);
+    } catch (err) {
+        res.status(500).json({ error: "Error fetching comments" });
     }
 });
 
 module.exports = router;
-

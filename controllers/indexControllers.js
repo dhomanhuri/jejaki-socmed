@@ -3,12 +3,6 @@ const jwt = require("jsonwebtoken");
 
 const index = async (req, res) => {
     try {
-        // console.log("ini session");
-        // console.log(req.session);
-        // console.log("ini coockies");
-        // console.log(req.cookies.token);
-        // console.log(req.user);
-
         const posts = await model.Post.findAll({
             include: [
                 { model: model.User, as: "user" },
@@ -28,15 +22,9 @@ const index = async (req, res) => {
 };
 const post = async (req, res) => {
     try {
-        console.log("ini session");
-        console.log(req.session);
-        console.log("ini coockies");
-        console.log(req.cookies.token);
-        console.log(req.user);
-
         const isLoggedin = req.cookies.token != undefined ? true : false;
 
-        res.render("createPost", { isLoggedin, user: req.user }); // Menampilkan halaman form untuk membuat post
+        res.render("createPost", { isLoggedin, user: req.user });
     } catch (err) {
         console.log(err);
 
@@ -46,37 +34,16 @@ const post = async (req, res) => {
 const poststore = async (req, res) => {
     try {
         const { content, image } = req.body;
-        const user_id = req.user.user.id; // Ambil userId dari session atau token
-
-        // Buat post baru
-        console.log("ini user");
-        console.log(req.user.user.id);
-
-        console.log({ content, user_id });
-
+        const user_id = req.user.user.id;
         await model.Post.create({
             content,
-            image, // Jika ada gambar
-            user_id, // Menyimpan ID user yang membuat post
+            image,
+            user_id,
         });
-        res.redirect("/threads"); // Redirect ke halaman home setelah post berhasil dibuat
+        res.redirect("/threads");
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error creating post" });
     }
-    // const { content, image } = req.body;
-    // const userId = req.user.id; // Ambil userId dari session atau token
-
-    // try {
-    //     await model.Post.create({
-    //         content,
-    //         image, // Jika ada gambar
-    //         userId, // Menyimpan ID user yang membuat post
-    //     });
-    //     res.redirect("/threads"); // Redirect ke halaman home setelah post berhasil dibuat
-    // } catch (err) {
-    //     console.error(err);
-    //     res.status(500).json({ error: "Error creating post" });
-    // }
 };
 module.exports = { index, post, poststore };

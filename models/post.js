@@ -1,7 +1,5 @@
 "use strict";
 const { Model } = require("sequelize");
-// models/post.js
-// models/post.js
 module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define('Post', {
     content: DataTypes.TEXT,

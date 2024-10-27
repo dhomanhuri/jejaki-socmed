@@ -43,11 +43,14 @@
 
 
                         <!-- <h1 class="mb-4">All Posts</h1> -->
+
                         <% posts.forEach(post=> { %>
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <h5 class="card-title">
-                                        <%= post.user.username %>
+                                        <a href="/<%= post.user.username %>">
+                                            <%= post.user.username %>
+                                        </a>
                                     </h5>
                                     <p class="card-text">
                                         <%= post.content %>
@@ -56,14 +59,21 @@
                                         <img src="<%= post.image %>" class="img-fluid" alt="Post image">
                                         <% } %>
                                             <p class="card-text"><small class="text-muted">Likes: <%= post.likes.length
-                                                        %>
-                                                </small>
-                                            </p>
+                                                        %></small></p>
 
                                             <!-- Form untuk like -->
-                                            <form action="/like/<%= post.id %>" method="POST" class="d-inline">
-                                                <button type="submit" class="btn btn-outline-primary">Like</button>
+                                            <form
+                                                action="<%= post.likes.find(like => like.userId === (user ? user.id : null)) ? '/unlike' : '/like' %>"
+                                                method="POST" class="d-inline">
+                                                <input type="hidden" name="post_id" value="<%= post.id %>">
+                                                <button type="submit"
+                                                    class="btn <%= post.likes.find(like => like.userId ===  (user ? user.id : null)) ? 'btn-danger' : 'btn-outline-primary' %>">
+                                                    <%= post.likes.find(like=> like.userId === (user ? user.id : null))
+                                                        ? 'Unlike'
+                                                        : 'Like' %>
+                                                </button>
                                             </form>
+
 
                                             <!-- List komentar -->
                                             <h6 class="mt-3">Comments:</h6>
@@ -75,7 +85,9 @@
                                                 <% }) %>
 
                                                     <!-- Form untuk komentar -->
-                                                    <form action="/comment/<%= post.id %>" method="POST">
+                                                    <form action="/comment" method="POST">
+                                                        <input type="hidden" name="post_id" value="<%= post.id %>">
+                                                        <!-- Menggunakan input hidden untuk mengirim postId -->
                                                         <div class="mb-3">
                                                             <textarea class="form-control" name="content" rows="2"
                                                                 required></textarea>

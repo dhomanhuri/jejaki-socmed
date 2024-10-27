@@ -10,8 +10,9 @@ const flash = require("connect-flash");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var authRouter = require("./routes/auth");
-// var likeRouter = require("./routes/like");
-// var commentRouter = require("./routes/comment");
+var likeRouter = require("./routes/like");
+var commentRouter = require("./routes/comment");
+var followRouter = require("./routes/follow");
 
 var app = express();
 app.use(session({ secret: process.env.JWT_SECRET, resave: false, saveUninitialized: true }));
@@ -34,7 +35,8 @@ app.use(cors());
 app.use("/", indexRouter);
 app.use("/apinya", usersRouter);
 app.use("/auth", authRouter);
-// app.use("/like", likeRouter);
-// app.use("/comment", commentRouter);
+app.use("/like", likeRouter);
+app.use("/comment", commentRouter);
+app.use("/follow", followRouter);
 
 module.exports = app;

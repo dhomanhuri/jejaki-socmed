@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize"); // models/comment.js
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
     const Comment = sequelize.define(
         "Comment",
@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
 
-    // Relasi antara Comment dan User serta Post
     Comment.associate = function (models) {
         Comment.belongsTo(models.User, {
             foreignKey: "user_id",
@@ -27,29 +26,4 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     return Comment;
-
-    /// models/comment.js
-    // module.exports = (sequelize, DataTypes) => {
-    //     const Comment = sequelize.define('Comment', {
-    //       content: {
-    //         type: DataTypes.TEXT,
-    //         allowNull: false,
-    //       },
-    //       userId: {
-    //         type: DataTypes.INTEGER,
-    //         allowNull: false,
-    //       },
-    //       postId: {
-    //         type: DataTypes.INTEGER,
-    //         allowNull: false,
-    //       },
-    //     });
-
-    //     Comment.associate = (models) => {
-    //       Comment.belongsTo(models.User, { foreignKey: 'userId' });
-    //       Comment.belongsTo(models.Post, { foreignKey: 'postId' });
-    //     };
-
-    //     return Comment;
-    //   };
 };

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Profile - <%= profile.username %>
+    </title>
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+        <div class="container mt-5">
+            <h1>Profile of <%= profile.username %>
+            </h1>
+            <div class="profile-info">
+
+                <% if (profile.profile_picture!=null) { %>
+                    <img src="<%= profile.profile_picture || 'default_profile.png' %>" alt="Profile Picture"
+                        class="img-fluid rounded-circle" width="150">
+
+                    <% } else { %>
+                        <img src="/assets/img/profiles.png" alt="Profile Picture" class="img-fluid rounded-circle"
+                            width="150">
+                        <% } %>
+                            <p><strong>Bio:</strong>
+                                <%= profile.bio || 'No bio available' %>
+                            </p>
+            </div>
+
+            <% if (user && user.user.username===profile.username) { %>
+                <a href="/account/edit" class="btn btn-primary">Edit Profile</a>
+                <% } %>
+
+                    <% if (user && user.user.username !==profile.username) { %>
+                        <% if (userData.Following.some(following=> following.username === profile.username)) { %>
+                            <form action="/follow/unfollow/<%= profile.username %>" methoD="POST">
+                                <button type="submit" class="btn btn-danger">Unfollow</button>
+                            </form>
+                            <% } else { %>
+                                <form action="/follow/follow/<%= profile.username %>" method="POST">
+                                    <button type="submit" class="btn btn-primary">Follow</button>
+                                </form>
+                                <% } %>
+                                    <% } %>
+                                        <h2>Followers</h2>
+                                        <% if (profile.Followers && profile.Followers.length> 0) { %>
+                                            <ul class="list-group">
+                                                <% profile.Followers.forEach(follower=> { %>
+                                                    <li class="list-group-item">
+                                                        <a href="/<%= follower.username %>">
+                                                            <%= follower.username %>
+                                                        </a>
+                                                    </li>
+                                                    <% }) %>
+                                            </ul>
+                                            <% } else { %>
+                                                <p>No followers yet.</p>
+                                                <% } %>
+
+                                                    <h2>Following</h2>
+                                                    <% if (profile.Following && profile.Following.length> 0) { %>
+                                                        <ul class="list-group">
+                                                            <% profile.Following.forEach(following=> { %>
+                                                                <li class="list-group-item">
+                                                                    <a href="/<%= following.username %>">
+                                                                        <%= following.username %>
+                                                                    </a>
+                                                                </li>
+                                                                <% }) %>
+                                                        </ul>
+                                                        <% } else { %>
+                                                            <p>Not following anyone.</p>
+                                                            <% } %>
+
+                                                                <h2>Posts</h2>
+                                                                <% if (profile.posts && profile.posts.length> 0) { %>
+                                                                    <ul class="list-group">
+                                                                        <% profile.posts.forEach(post=> { %>
+                                                                            <li class="list-group-item">
+                                                                                <h5>
+                                                                                    <%= post.title %>
+                                                                                </h5>
+                                                                                <p>
+                                                                                    <%= post.content %>
+                                                                                </p>
+                                                                            </li>
+                                                                            <% }) %>
+                                                                    </ul>
+                                                                    <% } else { %>
+                                                                        <p>No posts available.</p>
+                                                                        <% } %>
+        </div>
+
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

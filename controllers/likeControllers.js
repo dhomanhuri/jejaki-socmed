@@ -3,12 +3,6 @@ const jwt = require("jsonwebtoken");
 
 const index = async (req, res) => {
     try {
-        // console.log("ini session");
-        // console.log(req.session);
-        // console.log("ini coockies");
-        // console.log(req.cookies.token);
-        // console.log(req.user);
-
         const posts = await model.Post.findAll({
             include: [
                 { model: model.User, as: "user" },

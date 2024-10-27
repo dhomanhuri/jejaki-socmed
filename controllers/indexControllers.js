@@ -13,7 +13,10 @@ const index = async (req, res) => {
         });
         const isLoggedin = req.cookies.token != undefined ? true : false;
 
-        res.render("index", { posts, title: "home", isLoggedin, user: req.user });
+        const listUser = await model.User.findAll();
+        console.log(listUser);
+
+        res.render("index", { posts, title: "home", isLoggedin, user: req.user, listUser });
     } catch (err) {
         console.log(err);
 

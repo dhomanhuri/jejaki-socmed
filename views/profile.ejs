@@ -4,99 +4,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Profile - <%= profile.username %>
     </title>
+    <style>
+        body {
+            background-color: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid #007bff;
+            margin-bottom: 1rem;
+        }
+
+        .btn-follow {
+            transition: background-color 0.3s;
+        }
+
+        .btn-follow:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        .list-group-item {
+            background-color: transparent;
+            border: none;
+            padding: 0.75rem 1.25rem;
+        }
+
+        .list-group-item a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .list-group-item a:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            margin-bottom: 0.5rem;
+        }
+
+        .bio {
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 20px;
+        }
+    </style>
 </head>
 
 <body>
     <%- include('partials/navbar') %>
+
         <div class="container mt-5">
-            <h1>Profile of <%= profile.username %>
-            </h1>
-            <div class="profile-info">
-
-                <% if (profile.profile_picture!=null) { %>
-                    <img src="<%= profile.profile_picture || 'default_profile.png' %>" alt="Profile Picture"
-                        class="img-fluid rounded-circle" width="150">
-
-                    <% } else { %>
-                        <img src="/assets/img/profiles.png" alt="Profile Picture" class="img-fluid rounded-circle"
-                            width="150">
-                        <% } %>
-                            <p><strong>Bio:</strong>
-                                <%= profile.bio || 'No bio available' %>
-                            </p>
-            </div>
-
-            <% if (user && user.user.username===profile.username) { %>
-                <a href="/account/edit" class="btn btn-primary">Edit Profile</a>
-                <% } %>
-
-                    <% if (user && user.user.username !==profile.username) { %>
-                        <% if (userData.Following.some(following=> following.username === profile.username)) { %>
-                            <form action="/follow/unfollow/<%= profile.username %>" methoD="POST">
-                                <button type="submit" class="btn btn-danger">Unfollow</button>
-                            </form>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="profile-header">
+                        <% if (profile.profile_picture) { %>
+                            <img src="<%= profile.profile_picture %>" alt="Profile Picture">
                             <% } else { %>
-                                <form action="/follow/follow/<%= profile.username %>" method="POST">
-                                    <button type="submit" class="btn btn-primary">Follow</button>
-                                </form>
+                                <img src="/assets/img/profiles.png" alt="Profile Picture">
                                 <% } %>
-                                    <% } %>
-                                        <h2>Followers</h2>
-                                        <% if (profile.Followers && profile.Followers.length> 0) { %>
-                                            <ul class="list-group">
-                                                <% profile.Followers.forEach(follower=> { %>
-                                                    <li class="list-group-item">
-                                                        <a href="/<%= follower.username %>">
-                                                            <%= follower.username %>
-                                                        </a>
-                                                    </li>
-                                                    <% }) %>
-                                            </ul>
-                                            <% } else { %>
-                                                <p>No followers yet.</p>
-                                                <% } %>
+                                    <h1>Profile of <%= profile.username %>
+                                    </h1>
+                                    <p class="bio"><strong>Bio:</strong>
+                                        <%= profile.bio || 'No bio available' %>
+                                    </p>
+                    </div>
 
-                                                    <h2>Following</h2>
-                                                    <% if (profile.Following && profile.Following.length> 0) { %>
-                                                        <ul class="list-group">
-                                                            <% profile.Following.forEach(following=> { %>
-                                                                <li class="list-group-item">
-                                                                    <a href="/<%= following.username %>">
-                                                                        <%= following.username %>
-                                                                    </a>
-                                                                </li>
-                                                                <% }) %>
-                                                        </ul>
-                                                        <% } else { %>
-                                                            <p>Not following anyone.</p>
-                                                            <% } %>
+                    <% if (user && user.user.username===profile.username) { %>
+                        <a href="/account/edit" class="btn btn-primary mb-3">Edit Profile</a>
+                        <% } %>
 
-                                                                <h2>Posts</h2>
-                                                                <% if (profile.posts && profile.posts.length> 0) { %>
-                                                                    <ul class="list-group">
-                                                                        <% profile.posts.forEach(post=> { %>
-                                                                            <li class="list-group-item">
-                                                                                <h5>
-                                                                                    <%= post.title %>
-                                                                                </h5>
-                                                                                <p>
-                                                                                    <%= post.content %>
-                                                                                </p>
-                                                                            </li>
-                                                                            <% }) %>
-                                                                    </ul>
-                                                                    <% } else { %>
-                                                                        <p>No posts available.</p>
-                                                                        <% } %>
+                            <% if (user && user.user.username !==profile.username) { %>
+                                <% if (userData.Following.some(following=> following.username === profile.username)) {
+                                    %>
+                                    <form action="/follow/unfollow/<%= profile.username %>" method="POST" class="mb-3">
+                                        <button type="submit" class="btn btn-danger">Unfollow</button>
+                                    </form>
+                                    <% } else { %>
+                                        <form action="/follow/follow/<%= profile.username %>" method="POST"
+                                            class="mb-3">
+                                            <button type="submit" class="btn btn-primary btn-follow">Follow</button>
+                                        </form>
+                                        <% } %>
+                                            <% } %>
+
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h2>Followers</h2>
+                                                        <% if (profile.Followers && profile.Followers.length> 0) { %>
+                                                            <ul class="list-group">
+                                                                <% profile.Followers.forEach(follower=> { %>
+                                                                    <li class="list-group-item">
+                                                                        <a href="/<%= follower.username %>">
+                                                                            <%= follower.username %>
+                                                                        </a>
+                                                                    </li>
+                                                                    <% }) %>
+                                                            </ul>
+                                                            <% } else { %>
+                                                                <p>No followers yet.</p>
+                                                                <% } %>
+                                                    </div>
+                                                </div>
+
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h2>Following</h2>
+                                                        <% if (profile.Following && profile.Following.length> 0) { %>
+                                                            <ul class="list-group">
+                                                                <% profile.Following.forEach(following=> { %>
+                                                                    <li class="list-group-item">
+                                                                        <a href="/<%= following.username %>">
+                                                                            <%= following.username %>
+                                                                        </a>
+                                                                    </li>
+                                                                    <% }) %>
+                                                            </ul>
+                                                            <% } else { %>
+                                                                <p>Not following anyone.</p>
+                                                                <% } %>
+                                                    </div>
+                                                </div>
+
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h2>Posts</h2>
+                                                        <% if (profile.posts && profile.posts.length> 0) { %>
+                                                            <ul class="list-group">
+                                                                <% profile.posts.forEach(post=> { %>
+                                                                    <li class="list-group-item">
+                                                                        <h5 class="card-title">
+                                                                            <%= post.title %>
+                                                                        </h5>
+                                                                        <p class="card-text">
+                                                                            <%= post.content %>
+                                                                        </p>
+                                                                    </li>
+                                                                    <% }) %>
+                                                            </ul>
+                                                            <% } else { %>
+                                                                <p>No posts available.</p>
+                                                                <% } %>
+                                                    </div>
+                                                </div>
+                </div>
+
+                <div class="col-md-4 sidebar">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">User List</h5>
+                            <ul class="list-group">
+                                <% userList.forEach(user=> { %>
+                                    <li class="list-group-item">
+                                        <a href="/<%= user.username %>">
+                                            <%= user.username %>
+                                        </a>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Hashtags</h5>
+                            <ul class="list-group">
+                                <% hashtags.forEach(hashtag=> { %>
+                                    <li class="list-group-item">
+                                        <a href="/hashtag/<%= hashtag %>">
+                                            <%= hashtag %>
+                                        </a>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

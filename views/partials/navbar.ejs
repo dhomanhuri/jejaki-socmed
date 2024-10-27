@@ -1,33 +1,63 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
     <div class="container">
         <!-- Logo di sebelah kiri -->
         <a class="navbar-brand" href="/threads">
-            <img src="/assets/img/icon.jpg" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+            <img src="/assets/img/icon.jpg" alt="Logo" width="30" height="30"
+                class="d-inline-block align-text-top me-2">
             Jaksos
         </a>
 
-        <div class="d-flex">
-            <% if (isLoggedin) { %>
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                        <% if (user.user.profile_picture!=null) { %>
-                            <img src="<%= user.user.profile_picture %>" alt="User" width="30" height="30"
-                                class="rounded-circle">
-
-                            <% } else { %>
-                                <img src="/assets/img/profiles.png" alt="User" width="30" height="30"
-                                    class="rounded-circle">
-                                <% } %>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
-                    </ul>
-                </div>
-                <% } else { %>
-                    <a href="/auth/signin" class="btn btn-outline-primary">Sign In</a>
-                    <% } %>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="ms-auto d-flex align-items-center">
+                <% if (isLoggedin) { %>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
+                            id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <% if (user.user.profile_picture) { %>
+                                <img src="<%= user.user.profile_picture %>" alt="User" width="30" height="30"
+                                    class="rounded-circle me-2">
+                                <% } else { %>
+                                    <img src="/assets/img/profiles.png" alt="User" width="30" height="30"
+                                        class="rounded-circle me-2">
+                                    <% } %>
+                                        <span class="text-white">
+                                            <%= user.user.username %>
+                                        </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                    <% } else { %>
+                        <a href="/auth/signin" class="btn btn-outline-primary ms-3">Sign In</a>
+                        <% } %>
+            </div>
         </div>
     </div>
 </nav>
+
+<style>
+    /* Style tambahan untuk efek hover dan tampilan yang lebih baik */
+    .navbar-dark .navbar-nav .nav-link {
+        transition: color 0.3s;
+    }
+
+    .navbar-dark .navbar-nav .nav-link:hover {
+        color: #007bff;
+        /* Warna saat hover */
+    }
+
+    .dropdown-menu {
+        border-radius: 8px;
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        /* Warna latar saat hover */
+    }
+</style>

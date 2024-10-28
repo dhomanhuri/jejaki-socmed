@@ -1,11 +1,14 @@
 var express = require("express");
 var router = express.Router();
 const indexControllers = require("../controllers/indexControllers");
+const trandingsControllers = require("../controllers/trendingsControllers");
 const userControllers = require("../controllers/userControllers");
 const { auth_asguest, auth_asuser } = require("../middleware/auth");
 const model = require("../models/index");
 const { Like, Post, User } = require("../models");
 
+router.get("/trendings", trandingsControllers.index);
+router.get("/trendings/:hashtag", auth_asguest, trandingsControllers.hashtag);
 router.get("/threads", auth_asguest, indexControllers.index);
 router.get("/threads/post", auth_asuser, indexControllers.post);
 router.post("/threads/post", auth_asuser, indexControllers.poststore);
@@ -19,7 +22,6 @@ router.post("/unlike", auth_asuser, async (req, res) => {
     const user_id = req.user.user.id;
 
     try {
-
         const dataLike = await Like.findOne({
             where: { post_id, user_id },
         });

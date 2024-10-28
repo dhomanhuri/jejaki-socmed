@@ -125,7 +125,7 @@
                                 <li class="list-group-item border-0 d-flex align-items-center">
                                     <img src="<%= user.profile_picture || 'https://picsum.photos/200' %>"
                                         alt="Profile picture">
-                                    <a href="#" class="text-decoration-none text-muted">
+                                    <a href="/<%= user.username %>" class="text-decoration-none text-muted">
                                         <%= user.username %>
                                     </a>
                                 </li>
@@ -224,10 +224,10 @@
                     <div class="card p-3">
                         <div class="sidebar-title">Trending Hashtags</div>
                         <ul class="list-group list-group-flush">
-                            <% ['#hashtag1', '#hashtag2' , '#hashtag3' ].forEach(tag=> { %>
-                                <li class="list-group-item border-0"><a href="#"
+                            <% hashtagList.forEach(tag=> { %>
+                                <li class="list-group-item border-0"><a href="/trendings/<%= tag %>"
                                         class="text-decoration-none text-muted">
-                                        <%= tag %>
+                                        #<%= tag %>
                                     </a></li>
                                 <% }) %>
                         </ul>

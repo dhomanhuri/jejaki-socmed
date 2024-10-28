@@ -3,6 +3,7 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define('Post', {
     content: DataTypes.TEXT,
+    hashtags: DataTypes.TEXT,
     image: DataTypes.STRING
   }, {});
 

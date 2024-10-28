@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const model = require("../models/index");
 const jwt = require("jsonwebtoken");
 
@@ -14,9 +15,11 @@ const index = async (req, res) => {
         const isLoggedin = req.cookies.token != undefined ? true : false;
 
         const listUser = await model.User.findAll();
-        console.log(listUser);
+        const tag = await axios.get("http://localhost:3311/trendings");
+        const hashtagList = tag.data;
 
-        res.render("index", { posts, title: "home", isLoggedin, user: req.user, listUser });
+        console.log(req.user);
+        res.render("index", { posts, title: "home", isLoggedin, user: req.user, listUser, hashtagList });
     } catch (err) {
         console.log(err);
 
@@ -38,9 +41,16 @@ const poststore = async (req, res) => {
     try {
         const { content, image } = req.body;
         const user_id = req.user.user.id;
+        const hashtagRegex = /#(\w+)/g;
+        const hashtagsraw = content.match(hashtagRegex); // Mencocokkan semua hashtag
+
+        // Jika ada hashtag, gabungkan menjadi string
+        const hashtags = hashtagsraw ? hashtagsraw.join(",").replace(/#/g, "") : null; // Menghilangkan karakter '#' dari hasil
+        // return console.log(hashtags);
         await model.Post.create({
             content,
             image,
+            hashtags,
             user_id,
         });
         res.redirect("/threads");

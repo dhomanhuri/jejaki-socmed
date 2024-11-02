@@ -8,7 +8,7 @@ const model = require("../models/index");
 const { Like, Post, User } = require("../models");
 
 router.get("/trendings", trandingsControllers.index);
-router.get("/trendings/:hashtag", auth_asguest, trandingsControllers.hashtag);
+router.get("/trending/tag", auth_asguest, trandingsControllers.hashtag);
 router.get("/threads", auth_asguest, indexControllers.index);
 router.get("/threads/post", auth_asuser, indexControllers.post);
 router.post("/threads/post", auth_asuser, indexControllers.poststore);

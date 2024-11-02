@@ -13,6 +13,7 @@ var authRouter = require("./routes/auth");
 var likeRouter = require("./routes/like");
 var commentRouter = require("./routes/comment");
 var followRouter = require("./routes/follow");
+var apiRouter = require("./routes/api");
 
 var app = express();
 app.use(session({ secret: process.env.JWT_SECRET, resave: false, saveUninitialized: true }));
@@ -38,5 +39,6 @@ app.use("/auth", authRouter);
 app.use("/like", likeRouter);
 app.use("/comment", commentRouter);
 app.use("/follow", followRouter);
+app.use("/api", apiRouter);
 
 module.exports = app;

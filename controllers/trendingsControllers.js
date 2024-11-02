@@ -54,7 +54,7 @@ const hashtag = async (req, res) => {
         const hashtagList = tag.data;
         console.log(req.user);
 
-        res.render("index", { posts, title: "home", isLoggedin, user: req.user, listUser, hashtagList });
+        res.render("indextrending", { posts, title: "home", isLoggedin, user: req.user, listUser, hashtagList });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Error fetching posts" });

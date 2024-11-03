@@ -1,0 +1,24 @@
+name: Deploy CI/CD to alibabav3
+on:
+    push:
+        branches:
+            - RD_v1
+
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: executing deploy to server using remote ssh key
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.HOST }}
+                  username: ${{ secrets.USERNAME }}
+                  password: ${{ secrets.PASSWORD }}
+                  port: ${{ secrets.PORT }}
+                  script: |
+                      cd /root/jejaki-socmed
+                      git stash
+                      git pull origin RD_v1
+                      docker-compose down --remove-orphans
+                      docker image prune -a -f && docker-compose up -d --build

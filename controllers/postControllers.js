@@ -28,6 +28,62 @@ const index = async (req, res) => {
         res.status(500).json({ error: "Error fetching posts" });
     }
 };
+const index_following = async (req, res) => {
+    try {
+        const followingIds = await model.Follow.findAll({
+            where: { follower_id: req.user.user.id },
+            attributes: ["following_id"],
+        }).then((following) => following.map((f) => f.following_id));
+        // return res.json(followingIds);
+
+        if (followingIds.length === 0) {
+            return res.json({ status: true, data: [], user });
+        }
+        const page = parseInt(req.query.page) || 1; // halaman ke berapa, default 1
+        const limit = 10; // ambil 10 postingan per halaman
+        const offset = (page - 1) * limit;
+
+        const posts = await model.Post.findAll({
+            where: { user_id: followingIds },
+            include: [
+                { model: model.User, as: "user" },
+                { model: model.Like, as: "likes" },
+                { model: model.Comment, as: "comments", include: [{ model: model.User, as: "user" }] },
+            ],
+            order: [["id", "DESC"]],
+            limit,
+            offset,
+        });
+
+        const user = req.user;
+        console.log(user);
+
+        res.send({ status: true, data: posts, user });
+    } catch (err) {
+        const page = parseInt(req.query.page) || 1; // halaman ke berapa, default 1
+        const limit = 10; // ambil 10 postingan per halaman
+        const offset = (page - 1) * limit;
+
+        const posts = await model.Post.findAll({
+            include: [
+                { model: model.User, as: "user" },
+                { model: model.Like, as: "likes" },
+                { model: model.Comment, as: "comments", include: [{ model: model.User, as: "user" }] },
+            ],
+            order: [["id", "DESC"]],
+            limit,
+            offset,
+        });
+
+        const user = req.user;
+        console.log(user);
+
+        res.send({ status: true, data: posts, user });
+
+        // console.log(err);
+        // res.status(500).json({ error: "Error fetching posts" });
+    }
+};
 const index_trending = async (req, res) => {
     try {
         const { hashtag } = req.params;
@@ -105,4 +161,4 @@ const comment = async (req, res) => {
     }
 };
 
-module.exports = { index, like, comment, index_trending };
+module.exports = { index, like, comment, index_trending, index_following };

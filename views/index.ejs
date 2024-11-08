@@ -190,6 +190,8 @@
                     method: 'GET',
                     success: function (data) {
 
+                        const elemWidth = document.getElementById("loadMore").offsetWidth;
+                        console.log(elemWidth)
                         const user = data?.user?.user ? data?.user?.user : undefined
                         console.log(user)
                         data.data.forEach(post => {
@@ -202,8 +204,8 @@
                                         <small class="text-muted">${new Date(post.createdAt).toLocaleString()}</small>
                                     </div>
                                 </div>
-                                <p class="card-text mb-2">${post.content}</p>
-                                ${post.image ? `<img src="${post.image}" class="img-fluid" alt="Post image">` : ''}
+                                <p class="card-text mb-2" id="postscreen">${post.content}</p>
+                                ${post.image ? post.image.includes('youtube') ? `<iframe width="${elemWidth - elemWidth * 0.085}" height="${elemWidth - elemWidth * 0.425}" src="${post.image}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>` : `<img src="${post.image}" class="img-fluid" alt="Post image">` : ''}
                                 <div class="post-actions mt-3">
                                     <form action="${post.likes.find(like => like.user_id === (user ? user.id : null)) ? '/api/like' : '/api/like'}" method="POST" class="d-inline">
                                 <input type="hidden" name="post_id" value="${post.id}">

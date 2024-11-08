@@ -205,7 +205,7 @@
                                     <h6 class="mb-0"><a href="/${post.user.username}" class="text-decoration-none text-dark fw-bold">${post.user.username}</a></h6>
                                 </div>
                                 <p class="card-text mb-2">${post.content}</p>
-                                ${post.image ? `<img src="${post.image}" class="img-fluid" alt="Post image">` : ''}
+                                    ${post.image ? post.image.includes('youtube') ? `<iframe width="${elemWidth - elemWidth * 0.085}" height="${elemWidth - elemWidth * 0.425}" src="${post.image}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>` : `<img src="${post.image}" class="img-fluid" alt="Post image">` : ''}
                                 <div class="post-actions mt-3">
                                     <form action="${post.likes.find(like => like.user_id === (user ? user.id : null)) ? '/api/like' : '/api/like'}" method="POST" class="d-inline">
                                 <input type="hidden" name="post_id" value="${post.id}">
@@ -221,7 +221,7 @@
                                 </div>
                                 <div class="mt-3">
                                     <h6 class="text-muted">Comments</h6>
-                                     ${post.comments.map(comment => `<p><strong>${comment.user.username}</strong>: ${comment.content}</p>`).join('')}
+                                    ${post.comments.map(comment => `<p><strong>${comment.user.username}</strong>: ${comment.content}</p>`).join('')}
                                         <form action="/api/comment" method="POST" class="mt-2">
                                             <input type="hidden" name="post_id" value="${post.id}">
                                             <textarea class="form-control" name="content" rows="2" placeholder="Add a comment..." required></textarea>

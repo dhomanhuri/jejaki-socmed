@@ -39,14 +39,14 @@ const post = async (req, res) => {
 };
 const poststore = async (req, res) => {
     try {
-        const { content, image } = req.body;
+        var { content, image } = req.body;
         const user_id = req.user.user.id;
         const hashtagRegex = /#(\w+)/g;
         const hashtagsraw = content.match(hashtagRegex); // Mencocokkan semua hashtag
 
-        // Jika ada hashtag, gabungkan menjadi string
         const hashtags = hashtagsraw ? hashtagsraw.join(",").replace(/#/g, "") : null; // Menghilangkan karakter '#' dari hasil
-        // return console.log(hashtags);
+        console.log(image);
+        image = image.replace("watch?v=", "embed/");
         await model.Post.create({
             content,
             image,

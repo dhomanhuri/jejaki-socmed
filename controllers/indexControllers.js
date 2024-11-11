@@ -47,6 +47,7 @@ const poststore = async (req, res) => {
         const hashtags = hashtagsraw ? hashtagsraw.join(",").replace(/#/g, "") : null; // Menghilangkan karakter '#' dari hasil
         console.log(image);
         image = image.replace("https://youtu.be/", "https://youtube.com/embed/");
+        image = image.replace("https://m.youtube.com/watch?v=", "https://youtube.com/embed/");
         image = image.replace("watch?v=", "embed/");
         await model.Post.create({
             content,

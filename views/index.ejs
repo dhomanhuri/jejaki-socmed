@@ -156,10 +156,11 @@
                             <a href="/auth/signin" class="btn btn-outline-primary w-100 mb-4">Sign In to Post</a>
                             <% } %>
 
-                                <!-- Semua Post -->
                                 <div id="posts"></div>
-                                <!-- Tombol "Read More" -->
-                                <button id="loadMore" class="btn btn-primary w-100 mb-5">Read More</button>
+                                <button id="loadMore" class="btn btn-primary w-100 mb-5"
+                                    style="padding-right: 1.5rem;padding-left: 1.5rem;">
+                                    <div class="" id="fitcontentvid">Read More</div>
+                                </button>
                 </div>
 
                 <!-- Sidebar Kanan: List Hashtag -->
@@ -178,7 +179,7 @@
                 </div>
             </div>
         </div>
-
+        <script async src="https://www.tiktok.com/embed.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
@@ -190,7 +191,7 @@
                     method: 'GET',
                     success: function (data) {
 
-                        const elemWidth = document.getElementById("loadMore").offsetWidth;
+                        const elemWidth = document.getElementById("fitcontentvid").offsetWidth;
                         console.log(elemWidth)
                         const user = data?.user?.user ? data?.user?.user : undefined
                         console.log(user)
@@ -205,7 +206,14 @@
                                     </div>
                                 </div>
                                 <p class="card-text mb-2" id="postscreen">${post.content}</p>
-                                ${post.image ? post.image.includes('youtube') ? `<iframe width="${elemWidth - elemWidth * 0.085}" height="${elemWidth - elemWidth * 0.425}" src="${post.image}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>` : `<img src="${post.image}" class="img-fluid" alt="Post image">` : ''}
+                                ${post.image
+                                    ? post.image.includes('youtube')
+                                        ? `<iframe width="${elemWidth}" height="${elemWidth - elemWidth * 0.425}" src="${post.image}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+                                        : post.image.includes('tiktok')
+                                            ? `<div class="tiktokwrapper"><style>.tiktokwrapper{background:#fff;position:relative}.tiktokwrapper iframe{border:0;position:relative;z-index:2}.tiktokwrapper a{color:rgba(0,0,0,0);position:absolute;left:0;top:0;z-index:0}</style><a href="https://www.fluxaiimagegenerator.net">flux</a><blockquote class="tiktok-embed"  data-video-id="${post.image.split("/").pop().split("?")[0]}" style="max-width: 325px; min-width: 325px;"><section></section></blockquote></div>`
+                                            : `<img src="${post.image}" class="img-fluid" alt="Post image">`
+                                    : ''
+                                }
                                 <div class="post-actions mt-3">
                                     <form action="${post.likes.find(like => like.user_id === (user ? user.id : null)) ? '/api/like' : '/api/like'}" method="POST" class="d-inline">
                                 <input type="hidden" name="post_id" value="${post.id}">

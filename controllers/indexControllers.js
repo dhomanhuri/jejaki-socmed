@@ -2,16 +2,19 @@ const { default: axios } = require("axios");
 const model = require("../models/index");
 const jwt = require("jsonwebtoken");
 
+const redirect_root = (req, res) => {
+    res.redirect("/threads");
+};
 const index = async (req, res) => {
     try {
-        const posts = await model.Post.findAll({
-            include: [
-                { model: model.User, as: "user" },
-                { model: model.Like, as: "likes" },
-                { model: model.Comment, as: "comments", include: ["user"] },
-            ],
-            order: [["id", "DESC"]],
-        });
+        // const posts = await model.Post.findAll({
+        //     include: [
+        //         { model: model.User, as: "user" },
+        //         { model: model.Like, as: "likes" },
+        //         { model: model.Comment, as: "comments", include: ["user"] },
+        //     ],
+        //     order: [["id", "DESC"]],
+        // });
         const isLoggedin = req.cookies.token != undefined ? true : false;
 
         const listUser = await model.User.findAll();
@@ -19,7 +22,7 @@ const index = async (req, res) => {
         const hashtagList = tag.data;
 
         console.log(req.user);
-        res.render("index", { posts, title: "home", isLoggedin, user: req.user, listUser, hashtagList });
+        res.render("index", { title: "home", isLoggedin, user: req.user, listUser, hashtagList });
     } catch (err) {
         console.log(err);
 
@@ -61,4 +64,4 @@ const poststore = async (req, res) => {
         res.status(500).json({ error: "Error creating post" });
     }
 };
-module.exports = { index, post, poststore };
+module.exports = { index, post, poststore, redirect_root };

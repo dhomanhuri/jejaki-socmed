@@ -13,7 +13,7 @@ router.get("/trending/tag", auth_asguest, trandingsControllers.hashtag);
 router.get("/threads", auth_asguest, indexControllers.index);
 router.get("/threads/post", auth_asuser, indexControllers.post);
 router.post("/threads/post", auth_asuser, indexControllers.poststore);
-router.get("/", indexControllers.index);
+router.get("/", indexControllers.redirect_root);
 router.get("/:username", auth_asguest, userControllers.index);
 router.get("/account/edit", auth_asuser, userControllers.edit);
 router.post("/account/update", auth_asuser, userControllers.update);

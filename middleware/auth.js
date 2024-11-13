@@ -20,8 +20,6 @@ const auth = (req, res, next) => {
 const auth_asguest = (req, res, next) => {
     try {
         const token = req.cookies.token;
-        // console.log({ token });
-        // console.log(process.env.JWT_SECRET);
 
         const user = jwt.verify(token, process.env.JWT_SECRET);
         req.user = user;

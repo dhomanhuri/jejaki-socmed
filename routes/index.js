@@ -3,6 +3,7 @@ var router = express.Router();
 const indexControllers = require("../controllers/indexControllers");
 const trandingsControllers = require("../controllers/trendingsControllers");
 const userControllers = require("../controllers/userControllers");
+const authControllers = require("../controllers/authControllers");
 const { auth_asguest, auth_asuser } = require("../middleware/auth");
 const model = require("../models/index");
 const { Like, Post, User } = require("../models");

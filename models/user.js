@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
             password: DataTypes.STRING,
             profile_picture: DataTypes.STRING,
             bio: DataTypes.TEXT,
+            verificationToken: DataTypes.TEXT,
+            isVerified: DataTypes.BOOLEAN,
         },
         {}
     );

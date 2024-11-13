@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 // const model = require()
 const model = require("../models/index");
-
+const { transporter } = require("../utils/mailer");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const login = (req, res) => {
     try {
         const { username, password } = req.body;
@@ -55,6 +56,30 @@ const signinpost = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
+        if (!user.isVerified) {
+            const verificationToken = crypto.randomBytes(32).toString("hex");
+            const info = await transporter.sendMail({
+                from: `"Maddison Foo Koch 👻" <${process.env.SMTP_EMAIL}>`,
+                to: email,
+                subject: "Hello ✔, Verify your jejaki account",
+                text: "Is it you?",
+                html: `
+                <div style="font-family: Arial, sans-serif; text-align: center;">
+                    <p>Is it you?</p>
+                    <a href="https://jaksos.ilyas-labs.my.id/api/verify-email?token=${verificationToken}" 
+                        style="display: inline-block; padding: 12px 24px; margin-top: 10px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+                        Verify Your Account
+                    </a>
+                    <p>If you did not request this, please ignore this email.</p>
+                </div>
+            `,
+            });
+            console.log(info);
+
+            user.verificationToken = verificationToken;
+            await user.save();
+            return res.status(404).json({ error: "User not verified check mail" });
+        }
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(401).json({ error: "Invalid password" });
@@ -63,7 +88,7 @@ const signinpost = async (req, res) => {
         res.cookie("token", token); // Simpan token di cookie
         res.redirect("/threads");
     } catch (err) {
-        console.log(error);
+        console.log(err);
 
         res.status(500).json({ error: "Error logging in user" });
     }
@@ -90,7 +115,26 @@ const signuppost = async (req, res) => {
 
     try {
         const hash = await bcrypt.hash(password, 10);
-        const user = await model.User.create({ username, email, password: hash });
+
+        const verificationToken = crypto.randomBytes(32).toString("hex");
+        const info = await transporter.sendMail({
+            from: `"Maddison Foo Koch 👻" <${process.env.SMTP_EMAIL}>`,
+            to: email,
+            subject: "Hello ✔, Verify your jejaki account",
+            text: "Is it you?",
+            html: `
+                <div style="font-family: Arial, sans-serif; text-align: center;">
+                    <p>Is it you?</p>
+                    <a href="https://jaksos.ilyas-labs.my.id/api/verify-email?token=${verificationToken}" 
+                        style="display: inline-block; padding: 12px 24px; margin-top: 10px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+                        Verify Your Account
+                    </a>
+                    <p>If you did not request this, please ignore this email.</p>
+                </div>
+            `,
+        });
+
+        const user = await model.User.create({ username, email, password: hash, verificationToken });
         res.redirect("/auth/signin");
     } catch (err) {
         console.log(err);
@@ -99,4 +143,25 @@ const signuppost = async (req, res) => {
     }
 };
 
-module.exports = { login, isLogin, signin, signinpost, signup, signuppost, logout };
+const verified_mail = async (req, res) => {
+    const { token } = req.query;
+
+    try {
+        const user = await model.User.findOne({ where: { verificationToken: token } });
+        console.log(user);
+
+        if (!user) {
+            return res.status(400).json({ error: "Invalid or expired token" });
+        }
+
+        user.isVerified = true;
+        user.verificationToken = null; // Hapus token setelah verifikasi
+        await user.save();
+
+        res.json({ message: "Email verified successfully!" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error verifying email" });
+    }
+};
+module.exports = { verified_mail, login, isLogin, signin, signinpost, signup, signuppost, logout };

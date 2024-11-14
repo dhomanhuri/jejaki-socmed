@@ -1,6 +1,9 @@
 const model = require("../models/index");
 
 const sequelize = require("sequelize");
+const { base64decode } = require("../utils/base64decode");
+const { encryptdataid } = require("../utils/encryptdataid");
+const { basedecrypt } = require("../utils/basedecrypt");
 const Op = sequelize.Op;
 const index = async (req, res) => {
     try {
@@ -20,7 +23,6 @@ const index = async (req, res) => {
         });
 
         const user = req.user;
-        console.log(user);
 
         res.send({ status: true, data: posts, user });
     } catch (err) {
@@ -30,7 +32,52 @@ const index = async (req, res) => {
 };
 const index_following = async (req, res) => {
     // console.log(user);
-    console.log("bismillah");
+    if (req.query.content) {
+        const page = parseInt(req.query.page) || 1; // halaman ke berapa, default 1
+        const limit = 10; // ambil 10 postingan per halaman
+        const offset = (page - 1) * limit;
+
+        const posts = await model.Post.findAll({
+            where: { id: basedecrypt(req.query.content) },
+            include: [
+                { model: model.User, as: "user" },
+                { model: model.Like, as: "likes" },
+                { model: model.Comment, as: "comments", include: [{ model: model.User, as: "user" }] },
+            ],
+            order: [["id", "DESC"]],
+            limit,
+            offset,
+        });
+
+        const user = req.user;
+
+        return res.send({ status: true, data: posts, user });
+    }
+    if (req.query.tag) {
+        const page = parseInt(req.query.page) || 1; // halaman ke berapa, default 1
+        const limit = 10; // ambil 10 postingan per halaman
+        const offset = (page - 1) * limit;
+        const posts = await model.Post.findAll({
+            where: {
+                hashtags: {
+                    [Op.like]: `%${req.query.tag}%`, // Mencocokkan hashtag
+                },
+            },
+
+            include: [
+                { model: model.User, as: "user" },
+                { model: model.Like, as: "likes" },
+                { model: model.Comment, as: "comments", include: [{ model: model.User, as: "user" }] },
+            ],
+            order: [["id", "DESC"]],
+            limit,
+            offset,
+        });
+
+        const user = req.user;
+
+        return res.send({ status: true, data: posts, user });
+    }
     try {
         const followingIds = await model.Follow.findAll({
             where: { follower_id: req.user.user.id },
@@ -60,8 +107,11 @@ const index_following = async (req, res) => {
         });
         console.log(followingIds);
 
-        res.send({ status: true, data: posts, user });
+        const data = encryptdataid(posts);
+
+        res.send({ status: true, data: data, user });
     } catch (err) {
+        console.log("ini eerror");
         console.log(err);
 
         const page = parseInt(req.query.page) || 1; // halaman ke berapa, default 1
@@ -78,14 +128,9 @@ const index_following = async (req, res) => {
             limit,
             offset,
         });
-
         const user = req.user;
-        console.log(user);
-
-        res.send({ status: true, data: posts, user });
-
-        // console.log(err);
-        // res.status(500).json({ error: "Error fetching posts" });
+        const data = await encryptdataid(posts);
+        res.send({ status: true, data: data, user });
     }
 };
 const index_trending = async (req, res) => {
@@ -113,8 +158,9 @@ const index_trending = async (req, res) => {
 
         const user = req.user;
         // console.log(user);
+        const data = encryptdataid(posts);
 
-        res.send({ status: true, data: posts, user });
+        res.send({ status: true, data: data, user });
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: "Error fetching posts" });

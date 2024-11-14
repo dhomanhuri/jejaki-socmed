@@ -184,26 +184,47 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             let currentPage = 1;
-
+            const params = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams, prop) => searchParams.get(prop),
+            });
+            let value = params.content; // "some_value"
+            let tag = params.data; // "some_value"
+            function copy_link(text) {
+                navigator.clipboard.writeText(window.location.href + "?content=" + text).then(() => {
+                    alert('Link copied to clipboard!');
+                }).catch((err) => {
+                    console.error('Failed to copy: ', err);
+                });
+            }
             function loadPosts(page) {
+                if (value != null) {
+                    page = `${page}&content=${value}`
+                }
+                if (tag != null) {
+                    page = `${page}&tag=${tag}`
+                }
                 $.ajax({
                     url: `/api/posts_following?page=${page}`,
                     method: 'GET',
                     success: function (data) {
-
                         const elemWidth = document.getElementById("fitcontentvid").offsetWidth;
-                        console.log(elemWidth)
                         const user = data?.user?.user ? data?.user?.user : undefined
-                        console.log(user)
                         data.data.forEach(post => {
                             $('#posts').append(`
                             <div class="post-card">
-                                <div class="post-header">
-                                    <img src="${post.user.profile_picture || 'https://picsum.photos/200'}" alt="Profile picture">
-                                    <div>
-                                        <h6 class="mb-0"><a href="/${post.user.username}" class="text-decoration-none text-dark fw-bold">${post.user.username}</a></h6>
-                                        <small class="text-muted">${new Date(post.createdAt).toLocaleString()}</small>
+                                <div class="post-header d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <img src="${post.user.profile_picture || 'https://picsum.photos/200'}" alt="Profile picture">
+                                        <div class="ms-2">
+                                            <h6 class="mb-0">
+                                                <a href="/${post.user.username}" class="text-decoration-none text-dark fw-bold">
+                                                    ${post.user.username}
+                                                </a>
+                                            </h6>
+                                            <small class="text-muted">${new Date(post.createdAt).toLocaleString()}</small>
+                                        </div>
                                     </div>
+                                    <button class="btn btn-primary" onclick="copy_link('${post.data}')"><i class="bi bi-link-45deg"></i>Copy</button>
                                 </div>
                                 <p class="card-text mb-2" id="postscreen">${post.content}</p>
                                 ${post.image

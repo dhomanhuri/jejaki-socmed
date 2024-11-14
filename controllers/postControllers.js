@@ -50,8 +50,11 @@ const index_following = async (req, res) => {
         });
 
         const user = req.user;
+        console.log({ posts });
+        console.log(basedecrypt(req.query.content));
 
-        return res.send({ status: true, data: posts, user });
+        const data = encryptdataid(posts);
+        return res.send({ status: true, data: data, user });
     }
     if (req.query.tag) {
         const page = parseInt(req.query.page) || 1; // halaman ke berapa, default 1
@@ -75,8 +78,9 @@ const index_following = async (req, res) => {
         });
 
         const user = req.user;
+        const data = encryptdataid(posts);
 
-        return res.send({ status: true, data: posts, user });
+        return res.send({ status: true, data: data, user });
     }
     try {
         const followingIds = await model.Follow.findAll({

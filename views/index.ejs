@@ -224,7 +224,7 @@
                                             <small class="text-muted">${new Date(post.createdAt).toLocaleString()}</small>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary" onclick="copy_link('${post.data}')"><i class="bi bi-link-45deg"></i>Copy</button>
+                                    <!-- <button class="btn btn-primary" onclick="copy_link('${post.data}')"><i class="bi bi-link-45deg"></i>Copy</button> -->
                                 </div>
                                 <p class="card-text mb-2" id="postscreen">${post.content}</p>
                                 ${post.image
@@ -246,6 +246,10 @@
                                 <button class="btn-comment">
                                     <i class="bi bi-chat-left"></i>
                                     <span>${post.comments.length}</span>
+                                </button>
+                                <button class="btn-share" onclick="copy_link('${post.id}')">
+                                    <i class="bi bi-share"></i>
+                                    <span></span>
                                 </button>
                                 </div>
                                 <div class="mt-3">

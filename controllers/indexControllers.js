@@ -19,6 +19,7 @@ const index = async (req, res) => {
 
         const listUser = await model.User.findAll();
         const tag = await axios.get("http://localhost:3311/trendings");
+
         const hashtagList = tag.data;
 
         console.log(req.user);

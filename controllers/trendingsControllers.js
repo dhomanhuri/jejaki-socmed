@@ -18,13 +18,15 @@ const index = async (req, res) => {
             const arrTrendings = [];
             trending.forEach((post) => {
                 post.split(",").forEach((tag) => {
-                    arrTrendings.push(tag);
+                    if (!arrTrendings.includes(tag)) {
+                        arrTrendings.push(tag);
+                    }
                 });
             });
-            res.json(arrTrendings);
+            return res.json(arrTrendings);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: "Error fetching trending hashtags" });
+            return res.status(500).json({ error: "Error fetching trending hashtags" });
         }
     }
 };

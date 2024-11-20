@@ -38,7 +38,7 @@ const index_following = async (req, res) => {
         const offset = (page - 1) * limit;
 
         const posts = await model.Post.findAll({
-            where: { id: basedecrypt(req.query.content) },
+            where: { id: req.query.content },
             include: [
                 { model: model.User, as: "user" },
                 { model: model.Like, as: "likes" },
@@ -51,7 +51,7 @@ const index_following = async (req, res) => {
 
         const user = req.user;
         console.log({ posts });
-        console.log(basedecrypt(req.query.content));
+        console.log(req.query.content);
 
         const data = encryptdataid(posts);
         return res.send({ status: true, data: data, user });

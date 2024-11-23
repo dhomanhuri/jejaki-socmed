@@ -68,7 +68,7 @@ const signinpost = async (req, res) => {
                 html: `
                 <div style="font-family: Arial, sans-serif; text-align: center;">
                     <p>Is it you?</p>
-                    <a href="https://jaksos.ilyas-labs.my.id/api/verify-email?token=${verificationToken}" 
+                    <a href="https://jaksos.jejaki.id/api/verify-email?token=${verificationToken}" 
                         style="display: inline-block; padding: 12px 24px; margin-top: 10px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
                         Verify Your Account
                     </a>
@@ -140,7 +140,7 @@ const signuppost = async (req, res) => {
             html: `
                 <div style="font-family: Arial, sans-serif; text-align: center;">
                     <p>Is it you?</p>
-                    <a href="https://jaksos.ilyas-labs.my.id/api/verify-email?token=${verificationToken}" 
+                    <a href="https://jaksos.jejaki.id/api/verify-email?token=${verificationToken}" 
                         style="display: inline-block; padding: 12px 24px; margin-top: 10px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
                         Verify Your Account
                     </a>

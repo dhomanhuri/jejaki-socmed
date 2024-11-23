@@ -198,24 +198,53 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Hashtags</h5>
-                            <ul class="list-group">
-                                <% hashtags.forEach(hashtag=> { %>
-                                    <li class="list-group-item">
-                                        <a href="/hashtag/<%= hashtag %>">
-                                            <%= hashtag %>
-                                        </a>
-                                    </li>
-                                    <% }) %>
+                            <ul class="list-group" id="tagtranding">
+                                <!-- Hashtag list akan dimuat di sini -->
                             </ul>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
 
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function getTrending() {
+                $.ajax({
+                    url: '/trendings',
+                    method: 'GET',
+                    success: function (response) {
+                        try {
+
+                            const hashtagList = document.querySelector('#tagtranding'); // Temukan elemen daftar hashtag
+                            hashtagList.innerHTML = ''; // Kosongkan daftar sebelum menambahkan
+                            response.forEach((hashtag) => {
+                                const listItem = document.createElement('li');
+                                listItem.className = 'list-group-item';
+                                const link = document.createElement('a');
+                                link.href = `trending/tag?data=${(hashtag)}`;
+                                link.textContent = "#" + hashtag;
+                                listItem.appendChild(link);
+                                hashtagList.appendChild(listItem);
+                            });
+                        } catch (err) {
+                            console.log(err)
+                        }
+                    },
+                    error: function (err) {
+                        console.error('Error fetching trending hashtags:', err);
+                    },
+                });
+            }
+
+            $(document).ready(function () {
+                getTrending();
+            });
+        </script>
+
 </body>
 
 </html>

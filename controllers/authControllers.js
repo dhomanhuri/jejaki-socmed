@@ -4,6 +4,8 @@ const model = require("../models/index");
 const { transporter } = require("../utils/mailer");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const sequelize = require("sequelize");
+const Op = sequelize.Op;
 const login = (req, res) => {
     try {
         const { username, password } = req.body;
@@ -59,7 +61,7 @@ const signinpost = async (req, res) => {
         if (!user.isVerified) {
             const verificationToken = crypto.randomBytes(32).toString("hex");
             const info = await transporter.sendMail({
-                from: `"Maddison Foo Koch 👻" <${process.env.SMTP_EMAIL}>`,
+                from: `noreply@jejaki.id`,
                 to: email,
                 subject: "Hello ✔, Verify your jejaki account",
                 text: "Is it you?",
@@ -115,10 +117,23 @@ const signuppost = async (req, res) => {
 
     try {
         const hash = await bcrypt.hash(password, 10);
+        const existingUser = await model.User.findOne({
+            where: {
+                [Op.or]: [{ email }, { username }],
+            },
+        });
+        if (existingUser) {
+            if (existingUser.email === email) {
+                return res.status(400).json({ message: "Email is already taken." });
+            }
+            if (existingUser.username === username) {
+                return res.status(400).json({ message: "Username is already taken." });
+            }
+        }
 
         const verificationToken = crypto.randomBytes(32).toString("hex");
         const info = await transporter.sendMail({
-            from: `"Maddison Foo Koch 👻" <${process.env.SMTP_EMAIL}>`,
+            from: `noreply@jejaki.id`,
             to: email,
             subject: "Hello ✔, Verify your jejaki account",
             text: "Is it you?",

@@ -17,35 +17,43 @@
             <div class="col-md-4">
                 <h2 class="text-center">Sign Up</h2>
 
+                <% if (message.length> 0) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= message %>
+                    </div>
+                    <% } %>
 
-                <form action="/auth/signup" method="POST">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Username (tanpa spasi)</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-                            required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
-                </form>
-                <p class="text-center mt-3">
-                    Already have an account? <a href="/auth/signin">Sign in here</a>.
-                </p>
+                        <form action="/auth/signup" method="POST">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username (tanpa spasi dan karakter
+                                    khusus)</label>
+                                <input type="text" class="form-control" id="username" name="username" required
+                                    pattern="[a-zA-Z0-9]+"
+                                    title="Username hanya boleh terdiri dari huruf dan angka tanpa spasi atau karakter khusus.">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                    required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                        </form>
+                        <p class="text-center mt-3">
+                            Already have an account? <a href="/auth/signin">Sign in here</a>.
+                        </p>
 
-                <!-- Tombol Continue Without Login -->
-                <div class="text-center mt-3">
-                    <a href="/threads" class="btn btn-outline-secondary w-100">Continue Without Login</a>
-                </div>
+                        <!-- Tombol Continue Without Login -->
+                        <div class="text-center mt-3">
+                            <a href="/threads" class="btn btn-outline-secondary w-100">Continue Without Login</a>
+                        </div>
             </div>
         </div>
     </div>

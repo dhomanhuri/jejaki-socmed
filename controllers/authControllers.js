@@ -49,14 +49,15 @@ const isLogin = (req, res) => {
 };
 
 const signin = (req, res) => {
-    res.render("auth/signin", { title: "Sign In" });
+    const message = req.flash("message");
+    res.render("auth/signin", { title: "Sign In", message });
 };
 const signinpost = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await model.User.findOne({ where: { email } });
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            throw "Username and Password not match";
         }
         if (!user.isVerified) {
             const verificationToken = crypto.randomBytes(32).toString("hex");
@@ -84,7 +85,7 @@ const signinpost = async (req, res) => {
         }
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
-            return res.status(401).json({ error: "Invalid password" });
+            throw "Username and Password not match";
         }
         const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "1h" });
         res.cookie("token", token); // Simpan token di cookie
@@ -92,7 +93,11 @@ const signinpost = async (req, res) => {
     } catch (err) {
         console.log(err);
 
-        res.status(500).json({ error: "Error logging in user" });
+        req.flash("message", err);
+        res.redirect("/auth/signin");
+
+        // res.render("auth/signin", { title: "home" });
+        // res.status(500).json({ error: "Error logging in user" });
     }
 };
 const logout = async (req, res) => {
@@ -101,16 +106,17 @@ const logout = async (req, res) => {
         res.clearCookie("token");
         res.redirect("/threads");
     } catch (err) {
-        console.log(error);
+        console.log(err);
 
         res.status(500).json({ error: "Error logging in user" });
     }
 };
 const signup = (req, res) => {
-    res.render("auth/signup", { title: "Sign In" });
+    const message = req.flash("message");
+    return res.render("auth/signup", { title: "Sign In", message });
 };
 const signuppost = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { email, password, username } = req.body;
     console.log(username);
     console.log(email);
     console.log(password);
@@ -124,14 +130,18 @@ const signuppost = async (req, res) => {
         });
         if (existingUser) {
             if (existingUser.email === email) {
-                return res.status(400).json({ message: "Email is already taken." });
+                // return res.status(400).json({ message: "Email is already taken." });
+                throw "Email is already taken";
             }
             if (existingUser.username === username) {
-                return res.status(400).json({ message: "Username is already taken." });
+                // return res.status(400).json({ message: "Username is already taken." });
+                throw "Username is already taken";
             }
         }
 
         const verificationToken = crypto.randomBytes(32).toString("hex");
+
+        const user = await model.User.create({ username, email, password: hash, verificationToken });
         const info = await transporter.sendMail({
             from: `noreply@jejaki.id`,
             to: email,
@@ -140,7 +150,7 @@ const signuppost = async (req, res) => {
             html: `
                 <div style="font-family: Arial, sans-serif; text-align: center;">
                     <p>Is it you?</p>
-                    <a href="https://jaksos.jejaki.id/api/verify-email?token=${verificationToken}" 
+                    <a href="https://jaksos.jejaki.id/api/verify-email?token=${verificationToken}"
                         style="display: inline-block; padding: 12px 24px; margin-top: 10px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
                         Verify Your Account
                     </a>
@@ -149,12 +159,17 @@ const signuppost = async (req, res) => {
             `,
         });
 
-        const user = await model.User.create({ username, email, password: hash, verificationToken });
-        res.redirect("/auth/signin");
+        return res.redirect("/auth/signin");
     } catch (err) {
         console.log(err);
+        try {
+            req.flash("message", err);
+        } catch (error) {
+            req.flash("message", "something wrong");
+        }
+        return res.redirect("/auth/signup");
 
-        res.status(500).json({ error: "Error registering user" });
+        // res.status(500).json({ error: "Error registering user" });
     }
 };
 
